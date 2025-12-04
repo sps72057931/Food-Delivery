@@ -51,9 +51,7 @@ const PlaceOrder = () => {
       paymentMethod: paymentMethod,
     };
 
-    // --------------------
-    // ⭐ COD ORDER LOGIC
-    // --------------------
+    // COD ORDER
     if (paymentMethod === "cod") {
       let response = await axios.post(
         url + "/api/order/place-cod",
@@ -71,9 +69,7 @@ const PlaceOrder = () => {
       return;
     }
 
-    // --------------------
-    // ⭐ STRIPE LOGIC
-    // --------------------
+    // STRIPE ORDER
     let response = await axios.post(url + "/api/order/place", orderData, {
       headers: { token },
     });
@@ -154,6 +150,9 @@ const PlaceOrder = () => {
               className={`payment-option ${paymentMethod === "cod" ? "active" : ""}`}
               onClick={() => setPaymentMethod("cod")}
             >
+              <span className="radio-circle">
+                {paymentMethod === "cod" && <span className="dot"></span>}
+              </span>
               Cash On Delivery (COD)
             </div>
 
@@ -161,6 +160,9 @@ const PlaceOrder = () => {
               className={`payment-option ${paymentMethod === "stripe" ? "active" : ""}`}
               onClick={() => setPaymentMethod("stripe")}
             >
+              <span className="radio-circle">
+                {paymentMethod === "stripe" && <span className="dot"></span>}
+              </span>
               Stripe (Card Payment)
             </div>
           </div>
