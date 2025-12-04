@@ -24,40 +24,46 @@ const PlaceOrder = () => {
     phone: "",
   });
 
+  // Handle input change
   const onChangeHandler = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setData((data) => ({ ...data, [name]: value }));
+    const { name, value } = event.target;
+    setData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Place Order Function
   const placeOrder = async (event) => {
     event.preventDefault();
 
-    let orderItems = [];
+    // Build order items (ONLY required fields)
+    const orderItems = food_list
+      .filter((item) => cartItems[item._id] > 0)
+      .map((item) => ({
+        _id: item._id,
+        name: item.name,
+        price: item.price,
+        quantity: cartItems[item._id],
+        image: item.image,
+      }));
 
-    food_list.map((item) => {
-      if (cartItems[item._id] > 0) {
-        orderItems.push({
-          ...item,
-          quantity: cartItems[item._id],
-        });
-      }
-    });
+    if (orderItems.length === 0) {
+      toast.error("Cart is empty!");
+      return;
+    }
 
-    let orderData = {
+    const orderData = {
       address: data,
       items: orderItems,
       amount: getTotalCartAmount() + 2,
-      paymentMethod: paymentMethod,
+      paymentMethod,
     };
 
-    // ==========================
-    // ✅ COD ORDER
-    // ==========================
+    // ===========================
+    // ⭐ CASH ON DELIVERY (COD)
+    // ===========================
     if (paymentMethod === "cod") {
       try {
-        let response = await axios.post(
-          url + "/api/order/place-cod",
+        const response = await axios.post(
+          `${url}/api/order/place-cod`,
           orderData,
           { headers: { token } }
         );
@@ -66,39 +72,39 @@ const PlaceOrder = () => {
           toast.success("Order placed successfully!");
           navigate("/myorders");
         } else {
-          toast.error("Failed to place COD order");
+          toast.error(response.data.message || "COD order failed");
         }
       } catch (error) {
-        toast.error("COD order failed");
+        toast.error("COD order failed (server error)");
       }
 
       return;
     }
 
-    // ==========================
-    // ✅ STRIPE ORDER
-    // ==========================
+    // ===========================
+    // ⭐ STRIPE PAYMENT
+    // ===========================
     try {
-      let response = await axios.post(url + "/api/order/place", orderData, {
+      const response = await axios.post(`${url}/api/order/place`, orderData, {
         headers: { token },
       });
 
       if (response.data.success) {
         window.location.replace(response.data.session_url);
       } else {
-        toast.error("Payment failed");
+        toast.error("Stripe payment failed");
       }
     } catch (error) {
-      toast.error("Stripe payment failed");
+      toast.error("Stripe payment error");
     }
   };
 
   useEffect(() => {
     if (!token) {
-      toast.error("Please Login first");
+      toast.error("Please login first");
       navigate("/cart");
     } else if (getTotalCartAmount() === 0) {
-      toast.error("Please Add Items to Cart");
+      toast.error("Please add items to cart");
       navigate("/cart");
     }
   }, [token]);
@@ -132,9 +138,10 @@ const PlaceOrder = () => {
           name="email"
           value={data.email}
           onChange={onChangeHandler}
-          type="text"
+          type="email"
           placeholder="Email Address"
         />
+
         <input
           required
           name="street"
@@ -188,7 +195,7 @@ const PlaceOrder = () => {
           value={data.phone}
           onChange={onChangeHandler}
           type="text"
-          placeholder="Phone"
+          placeholder="Phone Number"
         />
       </div>
 
@@ -203,7 +210,6 @@ const PlaceOrder = () => {
             </div>
 
             <hr />
-
             <div className="cart-total-details">
               <p>Delivery Fee</p>
               <p>₹{getTotalCartAmount() === 0 ? 0 : 2}</p>
@@ -213,9 +219,7 @@ const PlaceOrder = () => {
 
             <div className="cart-total-details">
               <b>Total</b>
-              <b>
-                ₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}
-              </b>
+              <b>₹{getTotalCartAmount() + 2}</b>
             </div>
           </div>
 
