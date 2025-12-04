@@ -12,48 +12,109 @@ const placeOrder = async (req, res) => {
     const newOrder = new orderModel({
       userId: req.body.userId,
       items: req.body.items,
-      amount: req.body.amount,      // Already in INR
+      amount: req.body.amount,      
       address: req.body.address,
     });
 
     await newOrder.save();
     await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
 
-    // STRIPE LINE ITEMS IN INR
+    // STRIPE LINE ITEMS — USD (DON'T CHANGE)
     const line_items = req.body.items.map((item) => ({
       price_data: {
-        currency: "inr",      // 👈 FIXED: currency changed to INR
+        currency: "usd",     
         product_data: {
           name: item.name,
         },
-        unit_amount: item.price * 100,  // Stripe needs paisa
+        unit_amount: item.price * 100,  
       },
       quantity: item.quantity,
     }));
 
-    // Delivery fee in INR
+    // Delivery fee
     line_items.push({
       price_data: {
-        currency: "inr",          // 👈 FIXED
+        currency: "usd",
         product_data: {
           name: "Delivery Charges",
         },
-        unit_amount: 2 * 100,     // 2 INR delivery fee
+        unit_amount: 2 * 100,
       },
       quantity: 1,
     });
 
-    // CREATE STRIPE SESSION WITH INR
+    // STRIPE SESSION (USD)
     const session = await stripe.checkout.sessions.create({
       line_items: line_items,
       mode: "payment",
       success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
       cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
-      currency: "inr",   // 👈 OPTIONAL but recommended
     });
 
     res.json({ success: true, session_url: session.url });
 
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error" });
+  }
+};
+
+// verify order
+const verifyOrder = async (req, res) => {
+  const { orderId, success } = req.body;
+  try {
+    if (success == "true") {
+      await orderModel.findByIdAndUpdate(orderId, { payment: true });
+      res.json({ success: true, message: "Paid" });
+    } else {
+      await orderModel.findByIdAndDelete(orderId);
+      res.json({ success: false, message: "Not Paid" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error" });
+  }
+};
+
+// user orders
+const userOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({ userId: req.body.userId });
+    res.json({ success: true, data: orders });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error" });
+  }
+};
+
+// admin: list all orders
+const listOrders = async (req, res) => {
+  try {
+    let userData = await userModel.findById(req.body.userId);
+    if (userData && userData.role === "admin") {
+      const orders = await orderModel.find({});
+      res.json({ success: true, data: orders });
+    } else {
+      res.json({ success: false, message: "You are not admin" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error" });
+  }
+};
+
+// admin: update order status
+const updateStatus = async (req, res) => {
+  try {
+    let userData = await userModel.findById(req.body.userId);
+    if (userData && userData.role === "admin") {
+      await orderModel.findByIdAndUpdate(req.body.orderId, {
+        status: req.body.status,
+      });
+      res.json({ success: true, message: "Status Updated Successfully" });
+    } else {
+      res.json({ success: false, message: "You are not an admin" });
+    }
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: "Error" });
