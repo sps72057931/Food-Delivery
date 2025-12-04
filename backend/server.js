@@ -1,4 +1,4 @@
-import "dotenv/config";     // ← MUST be first
+import "dotenv/config";     // MUST be first
 
 import express from "express";
 import cors from "cors";
@@ -10,16 +10,25 @@ import orderRouter from "./routes/orderRoute.js";
 
 // app config
 const app = express();
+
+// Render provides PORT automatically
 const port = process.env.PORT || 4000;
 
-//middlewares
+// Middlewares
 app.use(express.json());
-app.use(cors());
+
+// IMPORTANT → allow frontend & Render to access backend
+app.use(
+  cors({
+    origin: "*",                 // or set specific frontend later
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 // DB connection
 connectDB();
 
-// api endpoints
+// API endpoints
 app.use("/api/food", foodRouter);
 app.use("/images", express.static("uploads"));
 app.use("/api/user", userRouter);
@@ -30,6 +39,7 @@ app.get("/", (req, res) => {
   res.send("API Working");
 });
 
+// Server start
 app.listen(port, () => {
   console.log(`Server Started on port: ${port}`);
 });
