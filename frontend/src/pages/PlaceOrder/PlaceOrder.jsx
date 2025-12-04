@@ -51,31 +51,45 @@ const PlaceOrder = () => {
       paymentMethod: paymentMethod,
     };
 
-    // COD ORDER
+    // ==========================
+    // ✅ COD ORDER
+    // ==========================
     if (paymentMethod === "cod") {
-      let response = await axios.post(url + "/api/order/place-cod", orderData, {
-        headers: { token },
-      });
+      try {
+        let response = await axios.post(
+          url + "/api/order/place-cod",
+          orderData,
+          { headers: { token } }
+        );
 
-      if (response.data.success) {
-        toast.success("Order placed successfully");
-        navigate("/myorders");
-      } else {
-        toast.error("Failed to place COD order");
+        if (response.data.success) {
+          toast.success("Order placed successfully!");
+          navigate("/myorders");
+        } else {
+          toast.error("Failed to place COD order");
+        }
+      } catch (error) {
+        toast.error("COD order failed");
       }
 
       return;
     }
 
-    // STRIPE ORDER
-    let response = await axios.post(url + "/api/order/place", orderData, {
-      headers: { token },
-    });
+    // ==========================
+    // ✅ STRIPE ORDER
+    // ==========================
+    try {
+      let response = await axios.post(url + "/api/order/place", orderData, {
+        headers: { token },
+      });
 
-    if (response.data.success) {
-      window.location.replace(response.data.session_url);
-    } else {
-      toast.error("Payment failed");
+      if (response.data.success) {
+        window.location.replace(response.data.session_url);
+      } else {
+        toast.error("Payment failed");
+      }
+    } catch (error) {
+      toast.error("Stripe payment failed");
     }
   };
 

@@ -26,7 +26,7 @@ const MyOrders = () => {
   }, [token]);
   return (
     <div className="my-orders">
-      <h2>Orders</h2>
+      <h2>My Orders</h2>
       <div className="container">
         {data.map((order, index) => {
           return (
