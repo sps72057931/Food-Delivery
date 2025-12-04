@@ -207,86 +207,30 @@ const PlaceOrder = () => {
 
           {/* PAYMENT OPTIONS */}
           <div className="payment-method">
-            <h3>Payment Method</h3>
+            <h3>Select Payment Method</h3>
 
-            {/* COD */}
             <div
               className={`payment-option ${
                 paymentMethod === "cod" ? "active" : ""
               }`}
               onClick={() => setPaymentMethod("cod")}
             >
-              <div
-                className={`radio-circle ${
-                  paymentMethod === "cod" ? "active" : ""
-                }`}
-              >
-                {paymentMethod === "cod" && (
-                  <div className="radio-inner-dot"></div>
-                )}
-              </div>
-              <span>COD ( Cash on delivery )</span>
+              <span className="radio-circle">
+                {paymentMethod === "cod" && <span className="dot"></span>}
+              </span>
+              Cash On Delivery (COD)
             </div>
 
-            {/* STRIPE */}
             <div
               className={`payment-option ${
                 paymentMethod === "stripe" ? "active" : ""
               }`}
               onClick={() => setPaymentMethod("stripe")}
             >
-              <div
-                className={`radio-circle ${
-                  paymentMethod === "stripe" ? "active" : ""
-                }`}
-              >
-                {paymentMethod === "stripe" && (
-                  <div className="radio-inner-dot"></div>
-                )}
-              </div>
-              <span>Stripe ( Credit / Debit )</span>
-            </div>
-          </div>
-          {/* PAYMENT OPTIONS */}
-          <div className="payment-method">
-            <h3>Payment Method</h3>
-
-            {/* COD */}
-            <div
-              className={`payment-option ${
-                paymentMethod === "cod" ? "active" : ""
-              }`}
-              onClick={() => setPaymentMethod("cod")}
-            >
-              <div
-                className={`radio-circle ${
-                  paymentMethod === "cod" ? "active" : ""
-                }`}
-              >
-                {paymentMethod === "cod" && (
-                  <div className="radio-inner-dot"></div>
-                )}
-              </div>
-              <span>COD ( Cash on delivery )</span>
-            </div>
-
-            {/* STRIPE */}
-            <div
-              className={`payment-option ${
-                paymentMethod === "stripe" ? "active" : ""
-              }`}
-              onClick={() => setPaymentMethod("stripe")}
-            >
-              <div
-                className={`radio-circle ${
-                  paymentMethod === "stripe" ? "active" : ""
-                }`}
-              >
-                {paymentMethod === "stripe" && (
-                  <div className="radio-inner-dot"></div>
-                )}
-              </div>
-              <span>Stripe ( Credit / Debit )</span>
+              <span className="radio-circle">
+                {paymentMethod === "stripe" && <span className="dot"></span>}
+              </span>
+              Stripe (Card Payment)
             </div>
           </div>
 
