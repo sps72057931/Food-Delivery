@@ -36,8 +36,7 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Uploads (optional)
-uploads/
+
 
 # Coverage
 coverage/
