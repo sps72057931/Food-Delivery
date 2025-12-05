@@ -1,7 +1,6 @@
 import orderModel from "../models/orderModel.js";
-import userModel from "../models/userModel.js";
 
-// PLACE ORDER (NO STRIPE)
+// PLACE ORDER
 export const placeOrder = async (req, res) => {
   try {
     const newOrder = new orderModel({
@@ -9,52 +8,54 @@ export const placeOrder = async (req, res) => {
       items: req.body.items,
       amount: req.body.amount,
       address: req.body.address,
-      payment: false, // COD → Not paid
+      payment: false,
     });
 
     await newOrder.save();
-
-    await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
-
-    res.json({
-      success: true,
-      message: "Order placed successfully (COD)",
-    });
+    res.json({ success: true, message: "Order Placed Successfully" });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
-// USER ORDERS
+// GET USER ORDERS
 export const userOrders = async (req, res) => {
   try {
-    const orders = await orderModel
-      .find({ userId: req.body.userId })
-      .sort({ date: -1 });
+    const orders = await orderModel.find({ userId: req.body.userId });
     res.json({ success: true, data: orders });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
-// ADMIN – ALL ORDERS
-export const allOrders = async (req, res) => {
+// ADMIN – GET ALL ORDERS
+export const listOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find().sort({ date: -1 });
+    const orders = await orderModel.find({});
     res.json({ success: true, data: orders });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
-// UPDATE STATUS
+// ADMIN – UPDATE STATUS
 export const updateStatus = async (req, res) => {
   try {
     await orderModel.findByIdAndUpdate(req.body.orderId, {
       status: req.body.status,
     });
-    res.json({ success: true });
+    res.json({ success: true, message: "Status Updated" });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// ❗ FIX: ADD CANCEL ORDER (JO ROUTER MAANG RAHA THA)
+export const cancelOrder = async (req, res) => {
+  try {
+    await orderModel.findByIdAndDelete(req.body.orderId);
+    res.json({ success: true, message: "Order Cancelled" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
   }
 };
