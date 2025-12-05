@@ -1,7 +1,7 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 
-// -------------------- PLACE ORDER --------------------
+// PLACE ORDER (NO STRIPE)
 export const placeOrder = async (req, res) => {
   try {
     const newOrder = new orderModel({
@@ -9,57 +9,52 @@ export const placeOrder = async (req, res) => {
       items: req.body.items,
       amount: req.body.amount,
       address: req.body.address,
-      // payment stays default: false
+      payment: false, // COD → Not paid
     });
 
     await newOrder.save();
 
+    await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
+
     res.json({
       success: true,
-      message: "Order placed successfully",
-      orderId: newOrder._id,
+      message: "Order placed successfully (COD)",
     });
   } catch (error) {
-    console.log("PLACE ORDER ERROR:", error);
-    res.json({ success: false, message: "Error creating order" });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// -------------------- USER ORDERS --------------------
+// USER ORDERS
 export const userOrders = async (req, res) => {
   try {
     const orders = await orderModel
       .find({ userId: req.body.userId })
       .sort({ date: -1 });
-
     res.json({ success: true, data: orders });
   } catch (error) {
-    console.log("USER ORDER ERROR:", error);
-    res.json({ success: false });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// -------------------- ALL ORDERS (ADMIN) --------------------
-export const listOrders = async (req, res) => {
+// ADMIN – ALL ORDERS
+export const allOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find({}).sort({ date: -1 });
+    const orders = await orderModel.find().sort({ date: -1 });
     res.json({ success: true, data: orders });
   } catch (error) {
-    console.log("LIST ORDER ERROR:", error);
-    res.json({ success: false });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// -------------------- UPDATE STATUS (ADMIN) --------------------
+// UPDATE STATUS
 export const updateStatus = async (req, res) => {
   try {
     await orderModel.findByIdAndUpdate(req.body.orderId, {
       status: req.body.status,
     });
-
-    res.json({ success: true, message: "Status updated" });
+    res.json({ success: true });
   } catch (error) {
-    console.log("STATUS UPDATE ERROR:", error);
-    res.json({ success: false });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
