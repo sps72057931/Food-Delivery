@@ -15,7 +15,7 @@ const MyOrders = () => {
       const response = await axios.post(
         `${url}/api/order/userorders`,
         {},
-        { headers: { token } }
+        { headers: { token: token } }
       );
 
       if (response.data.success) {
@@ -26,17 +26,12 @@ const MyOrders = () => {
     }
   };
 
-  // Permanently delete order (fixed)
+  // Delete order permanently
   const deleteOrder = async (orderId) => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user) return toast.error("User not found");
-
       const response = await axios.delete(
-        `${url}/api/order/delete/${orderId}?userId=${user._id}`,
-        {
-          headers: { token },
-        }
+        `${url}/api/order/delete/${orderId}`,
+        { headers: { token: token } }
       );
 
       if (response.data.success) {
