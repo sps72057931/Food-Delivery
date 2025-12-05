@@ -24,7 +24,6 @@ const placeOrder = async (req, res) => {
     await newOrder.save();
     await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
 
-    // Stripe line items
     const line_items = req.body.items.map((item) => ({
       price_data: {
         currency: "usd",
@@ -34,7 +33,6 @@ const placeOrder = async (req, res) => {
       quantity: item.quantity,
     }));
 
-    // Delivery fee
     line_items.push({
       price_data: {
         currency: "usd",
@@ -44,7 +42,6 @@ const placeOrder = async (req, res) => {
       quantity: 1,
     });
 
-    // Stripe session
     const session = await stripe.checkout.sessions.create({
       line_items,
       mode: "payment",
@@ -157,6 +154,54 @@ const updateStatus = async (req, res) => {
   }
 };
 
+// ==========================
+// CANCEL ORDER
+// ==========================
+const cancelOrder = async (req, res) => {
+  try {
+    const { orderId, userId } = req.body;
+
+    const order = await orderModel.findById(orderId);
+    if (!order) return res.json({ success: false, message: "Order not found" });
+
+    // Only owner can cancel
+    if (order.userId.toString() !== userId)
+      return res.json({
+        success: false,
+        message: "Unauthorized request",
+      });
+
+    // Stripe paid orders cannot be cancelled
+    if (order.paymentMethod === "Stripe" && order.payment === true)
+      return res.json({
+        success: false,
+        message: "Paid Stripe orders cannot be cancelled",
+      });
+
+    // Only allow while processing
+    if (order.status !== "Food Processing")
+      return res.json({
+        success: false,
+        message: "Order cannot be cancelled now",
+      });
+
+    await orderModel.findByIdAndUpdate(orderId, {
+      status: "Cancelled",
+    });
+
+    res.json({
+      success: true,
+      message: "Order Cancelled Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: "Error cancelling order",
+    });
+  }
+};
+
 export {
   placeOrder,
   placeOrderCOD,
@@ -164,4 +209,5 @@ export {
   userOrders,
   listOrders,
   updateStatus,
+  cancelOrder,
 };

@@ -1,5 +1,4 @@
 import express from "express";
-import authMiddleware from "../middleware/auth.js";
 import {
   listOrders,
   placeOrder,
@@ -7,7 +6,9 @@ import {
   userOrders,
   verifyOrder,
   placeOrderCOD,
+  cancelOrder,
 } from "../controllers/orderController.js";
+import authMiddleware from "../middleware/auth.js";
 
 const orderRouter = express.Router();
 
@@ -20,9 +21,14 @@ orderRouter.post("/place-cod", authMiddleware, placeOrderCOD);
 // Stripe verification
 orderRouter.post("/verify", verifyOrder);
 
+// User orders
+orderRouter.post("/userorders", authMiddleware, userOrders);
+
+// ⭐ ADD THIS — CANCEL ORDER ROUTE
+orderRouter.post("/cancel", authMiddleware, cancelOrder);
+
 // Admin routes
 orderRouter.post("/status", authMiddleware, updateStatus);
-orderRouter.post("/userorders", authMiddleware, userOrders);
 orderRouter.get("/list", authMiddleware, listOrders);
 
 export default orderRouter;
