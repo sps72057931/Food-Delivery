@@ -9,8 +9,15 @@ const StoreContextProvider = (props) => {
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
 
-  // Your backend URL
+  // Backend URL
   const url = "https://food-delivery-api-jq2l.onrender.com";
+
+  // Create Authorization header
+  const authHeader = (token) => ({
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   // -----------------------------
   // Add to Cart
@@ -25,7 +32,7 @@ const StoreContextProvider = (props) => {
       const response = await axios.post(
         `${url}/api/cart/add`,
         { itemId },
-        { headers: { token } }
+        authHeader(token)
       );
 
       if (response.data.success) {
@@ -49,7 +56,7 @@ const StoreContextProvider = (props) => {
       const response = await axios.post(
         `${url}/api/cart/remove`,
         { itemId },
-        { headers: { token } }
+        authHeader(token)
       );
 
       if (response.data.success) {
@@ -97,8 +104,9 @@ const StoreContextProvider = (props) => {
     const response = await axios.post(
       `${url}/api/cart/get`,
       {},
-      { headers: { token } }
+      authHeader(token)
     );
+
     setCartItems(response.data.cartData || {});
   };
 
@@ -119,9 +127,6 @@ const StoreContextProvider = (props) => {
     loadData();
   }, []);
 
-  // -----------------------------
-  // Context Value
-  // -----------------------------
   const contextValue = {
     food_list,
     cartItems,
