@@ -9,13 +9,12 @@ const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
   const [data, setData] = useState([]);
 
-  // Fetch orders
   const fetchOrders = async () => {
     try {
       const response = await axios.post(
         `${url}/api/order/userorders`,
         {},
-        { headers: { token: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.success) {
@@ -26,12 +25,11 @@ const MyOrders = () => {
     }
   };
 
-  // Delete order permanently
   const deleteOrder = async (orderId) => {
     try {
       const response = await axios.delete(
         `${url}/api/order/delete/${orderId}`,
-        { headers: { token: token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.success) {
@@ -67,8 +65,8 @@ const MyOrders = () => {
             <p>
               {order.items.map((item, idx) =>
                 idx === order.items.length - 1
-                  ? `${item.name} x ${item.quantity}`
-                  : `${item.name} x ${item.quantity}, `
+                  ? `${item.itemName} x ${item.quantity}`
+                  : `${item.itemName} x ${item.quantity}, `
               )}
             </p>
 
