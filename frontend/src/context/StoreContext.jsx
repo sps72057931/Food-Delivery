@@ -6,104 +6,84 @@ export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
+  const url = "https://food-delivery-api-jq2l.onrender.com";
+
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
 
-  const url = "https://food-delivery-api-jq2l.onrender.com";
-
-  // ADD TO CART
   const addToCart = async (itemId) => {
-    setCartItems((prev) => ({
-      ...prev,
-      [itemId]: (prev[itemId] || 0) + 1,
-    }));
-
+    if (!cartItems[itemId]) {
+      setCartItems((prev) => ({ ...prev, [itemId]: 1 }));
+    } else {
+      setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
+    }
     if (token) {
       const response = await axios.post(
-        `${url}/api/cart/add`,
+        url + "/api/cart/add",
         { itemId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { token } }
       );
-
-      if (response.data.success) toast.success("Item added to cart");
-      else toast.error(response.data.message || "Something went wrong");
+      if (response.data.success) {
+        toast.success("item Added to Cart");
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
-  // REMOVE FROM CART
   const removeFromCart = async (itemId) => {
-    setCartItems((prev) => ({
-      ...prev,
-      [itemId]: prev[itemId] - 1,
-    }));
-
+    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
     if (token) {
       const response = await axios.post(
-        `${url}/api/cart/remove`,
+        url + "/api/cart/remove",
         { itemId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { token } }
       );
-
-      if (response.data.success) toast.success("Item removed");
-      else toast.error(response.data.message || "Something went wrong");
+      if (response.data.success) {
+        toast.success("item Removed from Cart");
+      } else {
+        toast.error("Something went wrong");
+      }
     }
   };
 
-  // TOTAL AMOUNT
   const getTotalCartAmount = () => {
-    let total = 0;
-
+    let totalAmount = 0;
     for (const item in cartItems) {
       if (cartItems[item] > 0) {
-        const foodItem = food_list.find((p) => p._id === item);
-        if (foodItem) total += foodItem.price * cartItems[item];
+        let itemInfo = food_list.find((product) => product._id === item);
+        totalAmount += itemInfo.price * cartItems[item];
       }
     }
-    return total;
+    return totalAmount;
   };
 
-  // FOOD LIST
   const fetchFoodList = async () => {
-    const response = await axios.get(`${url}/api/food/list`);
-    if (response.data.success) setFoodList(response.data.data);
-    else toast.error("Error fetching foods");
+    const response = await axios.get(url + "/api/food/list");
+    if (response.data.success) {
+      setFoodList(response.data.data);
+    } else {
+      alert("Error! Products are not fetching..");
+    }
   };
 
-  // LOAD CART
-  const loadCartData = async (token) => {
+  const loadCardData = async (token) => {
     const response = await axios.post(
-      `${url}/api/cart/get`,
+      url + "/api/cart/get",
       {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      { headers: { token } }
     );
-    setCartItems(response.data.cartData || {});
+    setCartItems(response.data.cartData);
   };
 
-  // INITIAL LOAD
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-
-    const loadData = async () => {
+    async function loadData() {
       await fetchFoodList();
-
-      if (savedToken) {
-        setToken(savedToken);
-        await loadCartData(savedToken);
+      if (localStorage.getItem("token")) {
+        setToken(localStorage.getItem("token"));
+        await loadCardData(localStorage.getItem("token"));
       }
-    };
-
+    }
     loadData();
   }, []);
 
@@ -118,12 +98,10 @@ const StoreContextProvider = (props) => {
     token,
     setToken,
   };
-
   return (
     <StoreContext.Provider value={contextValue}>
       {props.children}
     </StoreContext.Provider>
   );
 };
-
 export default StoreContextProvider;

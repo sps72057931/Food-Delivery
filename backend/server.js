@@ -25,10 +25,8 @@ app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
 
-// ROOT ROUTE → Redirect to Frontend
 app.get("/", (req, res) => {
-  res.redirect("https://food-delivery-frontend-njue.onrender.com");
+  res.send("API Working");
 });
 
-// SERVER START
 app.listen(port, () => console.log(`Server started on port ${port}`));

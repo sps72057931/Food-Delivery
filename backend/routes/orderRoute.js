@@ -1,36 +1,28 @@
 import express from "express";
 import authMiddleware from "../middleware/auth.js";
-
 import {
-  placeOrder,
-  userOrders,
   listOrders,
+  placeOrder,
   updateStatus,
-  cancelOrder,
-  deleteOrder,
+  userOrders,
+  verifyOrder,
+  placeOrderCOD,
 } from "../controllers/orderController.js";
 
 const orderRouter = express.Router();
 
-// place online order
+// Stripe payment
 orderRouter.post("/place", authMiddleware, placeOrder);
 
-// ✅ place COD order (required for your frontend)
-orderRouter.post("/place-cod", authMiddleware, placeOrder);
+// COD order
+orderRouter.post("/place-cod", authMiddleware, placeOrderCOD);
 
-// get user's orders
-orderRouter.post("/userorders", authMiddleware, userOrders);
+// Stripe verification
+orderRouter.post("/verify", verifyOrder);
 
-// admin: get all orders
-orderRouter.get("/list", authMiddleware, listOrders);
-
-// admin: update order status
+// Admin routes
 orderRouter.post("/status", authMiddleware, updateStatus);
-
-// user: cancel order
-orderRouter.post("/cancel", authMiddleware, cancelOrder);
-
-// user: delete order permanently
-orderRouter.delete("/delete/:id", authMiddleware, deleteOrder);
+orderRouter.post("/userorders", authMiddleware, userOrders);
+orderRouter.get("/list", authMiddleware, listOrders);
 
 export default orderRouter;

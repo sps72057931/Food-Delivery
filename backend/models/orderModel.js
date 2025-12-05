@@ -1,19 +1,16 @@
-import express from "express";
-import {
-  placeOrder,
-  userOrders,
-  listOrders,
-  updateStatus,
-  cancelOrder, // ← REQUIRED
-} from "../controllers/orderController.js";
-import authMiddleware from "../middleware/auth.js";
+import mongoose from "mongoose";
 
-const orderRouter = express.Router();
+const orderSchema = new mongoose.Schema({
+  userId: { type: String, required: true },
+  items: { type: Array, required: true },
+  amount: { type: Number, required: true },
+  address: { type: Object, required: true },
+  status: { type: String, default: "Food Processing" },
+  date: { type: Date, default: Date.now() },
+  payment: { type: Boolean, default: false },
+});
 
-orderRouter.post("/place", authMiddleware, placeOrder);
-orderRouter.post("/userorders", authMiddleware, userOrders);
-orderRouter.get("/list", listOrders);
-orderRouter.post("/status", updateStatus);
-orderRouter.post("/cancel", cancelOrder);
+const orderModel =
+  mongoose.models.order || mongoose.model("order", orderSchema);
 
-export default orderRouter;
+export default orderModel;
