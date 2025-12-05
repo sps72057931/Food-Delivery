@@ -12,22 +12,25 @@ import {
 
 const orderRouter = express.Router();
 
-// place order
+// place online order
 orderRouter.post("/place", authMiddleware, placeOrder);
+
+// ✅ place COD order (required for your frontend)
+orderRouter.post("/place-cod", authMiddleware, placeOrder);
 
 // get user's orders
 orderRouter.post("/userorders", authMiddleware, userOrders);
 
-// admin all orders
+// admin: get all orders
 orderRouter.get("/list", authMiddleware, listOrders);
 
-// admin update status
+// admin: update order status
 orderRouter.post("/status", authMiddleware, updateStatus);
 
-// user cancel order
+// user: cancel order
 orderRouter.post("/cancel", authMiddleware, cancelOrder);
 
-// user delete permanently
+// user: delete order permanently
 orderRouter.delete("/delete/:id", authMiddleware, deleteOrder);
 
 export default orderRouter;
