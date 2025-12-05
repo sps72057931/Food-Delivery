@@ -40,20 +40,9 @@ const MyOrders = () => {
     }
   };
 
-  // 🔥 Dynamic Status Colors
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Cancelled":
-        return "red";
-      case "Delivered":
-        return "green";
-      case "Out for Delivery":
-        return "blue";
-      case "Processing":
-        return "orange";
-      default:
-        return "gray";
-    }
+  // REMOVE FROM SCREEN ONLY — no backend
+  const removeFromUI = (orderId) => {
+    setData((prev) => prev.filter((order) => order._id !== orderId));
   };
 
   useEffect(() => {
@@ -84,30 +73,43 @@ const MyOrders = () => {
             </p>
 
             <p>₹{order.amount}</p>
+
             <p>Items: {order.items.length}</p>
 
-            {/* STATUS UI */}
+            {/* STATUS */}
             <p>
               <span
                 style={{
-                  fontSize: "18px",
-                  marginRight: "6px",
-                  color: getStatusColor(order.status),
+                  color: order.status === "Cancelled" ? "red" : "#4caf50",
                 }}
               >
                 ●
               </span>
-
-              <b style={{ color: getStatusColor(order.status) }}>
+              <b
+                style={{
+                  color: order.status === "Cancelled" ? "red" : "black",
+                  marginLeft: "8px",
+                }}
+              >
                 {order.status}
               </b>
             </p>
 
-            {/* Cancel Button */}
-            {order.status !== "Cancelled" && order.status !== "Delivered" && (
+            {/* Cancel button */}
+            {order.status !== "Cancelled" && (
               <button onClick={() => cancelOrder(order._id)}>
                 Cancel Order
               </button>
+            )}
+
+            {/* ❌ CROSS ICON — only for cancelled */}
+            {order.status === "Cancelled" && (
+              <div
+                className="delete-icon"
+                onClick={() => removeFromUI(order._id)}
+              >
+                ✖
+              </div>
             )}
           </div>
         ))}
