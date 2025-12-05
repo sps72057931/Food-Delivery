@@ -9,11 +9,11 @@ const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
   const [data, setData] = useState([]);
 
-  // Fetch all orders
+  // Fetch orders
   const fetchOrders = async () => {
     try {
       const response = await axios.post(
-        url + "/api/order/userorders",
+        `${url}/api/order/userorders`,
         {},
         { headers: { token } }
       );
@@ -26,16 +26,16 @@ const MyOrders = () => {
     }
   };
 
-  // Permanently delete order
+  // Permanently delete order (fixed)
   const deleteOrder = async (orderId) => {
     try {
       const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) return toast.error("User not found");
 
       const response = await axios.delete(
-        url + `/api/order/delete/${orderId}`,
+        `${url}/api/order/delete/${orderId}?userId=${user._id}`,
         {
           headers: { token },
-          data: { userId: user._id },
         }
       );
 
@@ -72,8 +72,8 @@ const MyOrders = () => {
             <p>
               {order.items.map((item, idx) =>
                 idx === order.items.length - 1
-                  ? item.name + " x " + item.quantity
-                  : item.name + " x " + item.quantity + ", "
+                  ? `${item.name} x ${item.quantity}`
+                  : `${item.name} x ${item.quantity}, `
               )}
             </p>
 
@@ -98,7 +98,6 @@ const MyOrders = () => {
               </b>
             </p>
 
-            {/* Delete permanently (only cancelled orders) */}
             {order.status === "Cancelled" && (
               <div
                 className="delete-icon"

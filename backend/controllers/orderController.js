@@ -85,9 +85,12 @@ export const cancelOrder = async (req, res) => {
 // ---------------------- DELETE ORDER PERMANENTLY ----------------------
 export const deleteOrder = async (req, res) => {
   try {
+    // Get userId from QUERY instead of body (Render FIX)
+    const userId = req.query.userId;
+
     const order = await orderModel.findOne({
       _id: req.params.id,
-      userId: req.body.userId,
+      userId: userId,
     });
 
     if (!order) return res.json({ success: false, message: "Order not found" });
