@@ -8,9 +8,8 @@ import Orders from "./pages/Orders/Orders";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Login from "./components/Login/Login";
-import { API_URL } from "./config";
 const App = () => {
-  const url = API_URL;
+  const url = "https://food-delivery-api-jq2l.onrender.com";
   return (
     <div>
       <ToastContainer />

@@ -1,13 +1,12 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { API_URL } from "../config";
 
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
-  const url = API_URL;
+  const url = "https://food-delivery-api-jq2l.onrender.com";
 
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
