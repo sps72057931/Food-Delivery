@@ -1,12 +1,12 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 
-// ---------------------- PLACE ORDER ----------------------
+// PLACE ORDER
 export const placeOrder = async (req, res) => {
   try {
     const newOrder = new orderModel({
       userId: req.body.userId,
-      items: req.body.items,
+      items: req.body.items, // this now contains name, price, qty
       amount: req.body.amount,
       address: req.body.address,
       status: "Placed",
@@ -15,22 +15,17 @@ export const placeOrder = async (req, res) => {
 
     await newOrder.save();
 
-    // clear user's cart after order
     await userModel.findByIdAndUpdate(req.body.userId, {
       cartData: {},
     });
 
-    res.json({
-      success: true,
-      message: "Order placed successfully",
-    });
+    res.json({ success: true, message: "Order placed successfully" });
   } catch (error) {
-    console.log(error);
     res.json({ success: false, message: "Error placing order" });
   }
 };
 
-// ---------------------- GET USER ORDERS ----------------------
+// USER ORDERS
 export const userOrders = async (req, res) => {
   try {
     const orders = await orderModel
@@ -38,22 +33,22 @@ export const userOrders = async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json({ success: true, data: orders });
-  } catch (error) {
+  } catch {
     res.json({ success: false, message: "Error fetching user orders" });
   }
 };
 
-// ---------------------- ADMIN: GET ALL ORDERS ----------------------
+// ADMIN ALL ORDERS
 export const listOrders = async (req, res) => {
   try {
     const orders = await orderModel.find({}).sort({ createdAt: -1 });
     res.json({ success: true, data: orders });
-  } catch (error) {
+  } catch {
     res.json({ success: false, message: "Error fetching orders" });
   }
 };
 
-// ---------------------- UPDATE ORDER STATUS ----------------------
+// UPDATE STATUS
 export const updateStatus = async (req, res) => {
   try {
     await orderModel.findByIdAndUpdate(req.body.orderId, {
@@ -61,48 +56,40 @@ export const updateStatus = async (req, res) => {
     });
 
     res.json({ success: true, message: "Order status updated" });
-  } catch (error) {
+  } catch {
     res.json({ success: false, message: "Error updating status" });
   }
 };
 
-// ---------------------- CANCEL ORDER (USER) ----------------------
+// CANCEL ORDER
 export const cancelOrder = async (req, res) => {
   try {
     await orderModel.findByIdAndUpdate(req.body.orderId, {
       status: "Cancelled",
     });
 
-    res.json({
-      success: true,
-      message: "Order cancelled successfully",
-    });
-  } catch (error) {
+    res.json({ success: true, message: "Order cancelled" });
+  } catch {
     res.json({ success: false, message: "Error cancelling order" });
   }
 };
 
-// ---------------------- DELETE ORDER PERMANENTLY ----------------------
+// DELETE ORDER
 export const deleteOrder = async (req, res) => {
   try {
-    // Get userId from QUERY instead of body (Render FIX)
     const userId = req.query.userId;
 
     const order = await orderModel.findOne({
       _id: req.params.id,
-      userId: userId,
+      userId,
     });
 
     if (!order) return res.json({ success: false, message: "Order not found" });
 
     await orderModel.findByIdAndDelete(req.params.id);
 
-    res.json({
-      success: true,
-      message: "Order deleted permanently",
-    });
+    res.json({ success: true, message: "Order deleted permanently" });
   } catch (error) {
-    console.log(error);
     res.json({ success: false, message: "Error deleting order" });
   }
 };

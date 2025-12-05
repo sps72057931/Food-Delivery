@@ -22,16 +22,15 @@ const PlaceOrder = () => {
     phone: "",
   });
 
-  // Handle input change
   const onChangeHandler = (event) => {
     const { name, value } = event.target;
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Place Order Function
   const placeOrder = async (event) => {
     event.preventDefault();
 
+    // FIXED: items now properly mapped
     const orderItems = food_list
       .filter((item) => cartItems[item._id] > 0)
       .map((item) => ({
@@ -51,19 +50,14 @@ const PlaceOrder = () => {
       address: data,
       items: orderItems,
       amount: getTotalCartAmount() + 2,
-      paymentMethod: "cod", // Only COD
     };
 
     try {
-      const response = await axios.post(
-        `${url}/api/order/place-cod`,
-        orderData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // ✅ FIXED HERE
-          },
-        }
-      );
+      const response = await axios.post(`${url}/api/order/place`, orderData, {
+        headers: {
+          Authorization: `Bearer ${token}`, // FIXED TOKEN
+        },
+      });
 
       if (response.data.success) {
         toast.success("Order placed successfully!");
@@ -200,7 +194,6 @@ const PlaceOrder = () => {
             </div>
           </div>
 
-          {/* Only COD */}
           <div className="payment-method">
             <h3>Payment Method</h3>
 
