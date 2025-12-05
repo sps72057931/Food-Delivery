@@ -26,30 +26,29 @@ const MyOrders = () => {
     }
   };
 
-  // Cancel (backend permanent delete)
-  const cancelOrder = async (orderId) => {
+  // Permanently delete order
+  const deleteOrder = async (orderId) => {
     try {
-      const response = await axios.post(
-        url + `/api/order/cancel/${orderId}`,
-        {},
-        { headers: { token } }
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      const response = await axios.delete(
+        url + `/api/order/delete/${orderId}`,
+        {
+          headers: { token },
+          data: { userId: user._id },
+        }
       );
 
       if (response.data.success) {
-        toast.success("Order Cancelled");
-        fetchOrders(); // Refresh list
+        toast.success("Order Deleted");
+        fetchOrders();
       } else {
         toast.error(response.data.message);
       }
     } catch (err) {
-      toast.error("Something went wrong");
       console.log(err);
+      toast.error("Delete failed");
     }
-  };
-
-  // Remove cancelled order from UI
-  const removeFromUI = (orderId) => {
-    setData((prev) => prev.filter((order) => order._id !== orderId));
   };
 
   useEffect(() => {
@@ -81,7 +80,6 @@ const MyOrders = () => {
             <p>₹{order.amount}</p>
             <p>Items: {order.items.length}</p>
 
-            {/* STATUS TEXT */}
             <p>
               <span
                 style={{
@@ -100,18 +98,11 @@ const MyOrders = () => {
               </b>
             </p>
 
-            {/* Cancel Button */}
-            {order.status !== "Cancelled" && (
-              <button onClick={() => cancelOrder(order._id)}>
-                Cancel Order
-              </button>
-            )}
-
-            {/* Cross Delete Icon (Frontend Only) */}
+            {/* Delete permanently (only cancelled orders) */}
             {order.status === "Cancelled" && (
               <div
                 className="delete-icon"
-                onClick={() => removeFromUI(order._id)}
+                onClick={() => deleteOrder(order._id)}
               >
                 ✖
               </div>

@@ -2,32 +2,32 @@ import express from "express";
 import authMiddleware from "../middleware/auth.js";
 
 import {
-  listOrders,
   placeOrder,
-  updateStatus,
   userOrders,
-  verifyOrder,
-  placeOrderCOD,
+  listOrders,
+  updateStatus,
   cancelOrder,
+  deleteOrder,
 } from "../controllers/orderController.js";
 
 const orderRouter = express.Router();
 
-// Stripe payment
+// place order
 orderRouter.post("/place", authMiddleware, placeOrder);
 
-// COD order
-orderRouter.post("/place-cod", authMiddleware, placeOrderCOD);
-
-// Stripe verification
-orderRouter.post("/verify", verifyOrder);
-
-// Admin
-orderRouter.post("/status", authMiddleware, updateStatus);
+// get user's orders
 orderRouter.post("/userorders", authMiddleware, userOrders);
+
+// admin all orders
 orderRouter.get("/list", authMiddleware, listOrders);
 
-// ⭐ DELETE ORDER PERMANENTLY
-orderRouter.delete("/cancel/:id", authMiddleware, cancelOrder);
+// admin update status
+orderRouter.post("/status", authMiddleware, updateStatus);
+
+// user cancel order
+orderRouter.post("/cancel", authMiddleware, cancelOrder);
+
+// user delete permanently
+orderRouter.delete("/delete/:id", authMiddleware, deleteOrder);
 
 export default orderRouter;

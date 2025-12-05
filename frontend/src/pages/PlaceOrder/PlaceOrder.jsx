@@ -10,8 +10,6 @@ const PlaceOrder = () => {
   const { getTotalCartAmount, token, food_list, cartItems, url } =
     useContext(StoreContext);
 
-  const [paymentMethod, setPaymentMethod] = useState("stripe");
-
   const [data, setData] = useState({
     firstName: "",
     lastName: "",
@@ -34,7 +32,6 @@ const PlaceOrder = () => {
   const placeOrder = async (event) => {
     event.preventDefault();
 
-    // Build order items (ONLY required fields)
     const orderItems = food_list
       .filter((item) => cartItems[item._id] > 0)
       .map((item) => ({
@@ -54,48 +51,24 @@ const PlaceOrder = () => {
       address: data,
       items: orderItems,
       amount: getTotalCartAmount() + 2,
-      paymentMethod,
+      paymentMethod: "cod", // Only COD
     };
 
-    // ===========================
-    // ⭐ CASH ON DELIVERY (COD)
-    // ===========================
-    if (paymentMethod === "cod") {
-      try {
-        const response = await axios.post(
-          `${url}/api/order/place-cod`,
-          orderData,
-          { headers: { token } }
-        );
-
-        if (response.data.success) {
-          toast.success("Order placed successfully!");
-          navigate("/myorders");
-        } else {
-          toast.error(response.data.message || "COD order failed");
-        }
-      } catch (error) {
-        toast.error("COD order failed (server error)");
-      }
-
-      return;
-    }
-
-    // ===========================
-    // ⭐ STRIPE PAYMENT
-    // ===========================
     try {
-      const response = await axios.post(`${url}/api/order/place`, orderData, {
-        headers: { token },
-      });
+      const response = await axios.post(
+        `${url}/api/order/place-cod`,
+        orderData,
+        { headers: { token } }
+      );
 
       if (response.data.success) {
-        window.location.replace(response.data.session_url);
+        toast.success("Order placed successfully!");
+        navigate("/myorders");
       } else {
-        toast.error("Stripe payment failed");
+        toast.error(response.data.message || "Order failed");
       }
     } catch (error) {
-      toast.error("Stripe payment error");
+      toast.error("Order failed (server error)");
     }
   };
 
@@ -223,38 +196,19 @@ const PlaceOrder = () => {
             </div>
           </div>
 
-          {/* PAYMENT OPTIONS */}
+          {/* Only COD */}
           <div className="payment-method">
-            <h3>Select Payment Method</h3>
+            <h3>Payment Method</h3>
 
-            <div
-              className={`payment-option ${
-                paymentMethod === "cod" ? "active" : ""
-              }`}
-              onClick={() => setPaymentMethod("cod")}
-            >
+            <div className="payment-option active">
               <span className="radio-circle">
-                {paymentMethod === "cod" && <span className="dot"></span>}
+                <span className="dot"></span>
               </span>
               Cash On Delivery (COD)
             </div>
-
-            <div
-              className={`payment-option ${
-                paymentMethod === "stripe" ? "active" : ""
-              }`}
-              onClick={() => setPaymentMethod("stripe")}
-            >
-              <span className="radio-circle">
-                {paymentMethod === "stripe" && <span className="dot"></span>}
-              </span>
-              Stripe (Card Payment)
-            </div>
           </div>
 
-          <button type="submit">
-            {paymentMethod === "cod" ? "PLACE ORDER" : "PROCEED TO PAYMENT"}
-          </button>
+          <button type="submit">PLACE ORDER</button>
         </div>
       </div>
     </form>
