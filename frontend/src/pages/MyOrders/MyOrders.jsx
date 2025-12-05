@@ -9,28 +9,35 @@ const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
   const [data, setData] = useState([]);
 
+  // Fetch all orders
   const fetchOrders = async () => {
-    const response = await axios.post(
-      url + "/api/order/userorders",
-      {},
-      { headers: { token } }
-    );
-    if (response.data.success) {
-      setData(response.data.data);
+    try {
+      const response = await axios.post(
+        url + "/api/order/userorders",
+        {},
+        { headers: { token } }
+      );
+
+      if (response.data.success) {
+        setData(response.data.data);
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
+  // Cancel (backend permanent delete)
   const cancelOrder = async (orderId) => {
     try {
       const response = await axios.post(
-        url + "/api/order/cancel",
-        { orderId },
+        url + `/api/order/cancel/${orderId}`,
+        {},
         { headers: { token } }
       );
 
       if (response.data.success) {
         toast.success("Order Cancelled");
-        fetchOrders();
+        fetchOrders(); // Refresh list
       } else {
         toast.error(response.data.message);
       }
@@ -40,24 +47,23 @@ const MyOrders = () => {
     }
   };
 
-  // REMOVE FROM SCREEN ONLY — no backend
+  // Remove cancelled order from UI
   const removeFromUI = (orderId) => {
     setData((prev) => prev.filter((order) => order._id !== orderId));
   };
 
   useEffect(() => {
-    if (token) {
-      fetchOrders();
-    }
+    if (token) fetchOrders();
   }, [token]);
 
   return (
     <div className="my-orders">
       <h2>My Orders</h2>
+
       <div className="container">
-        {data.map((order, index) => (
+        {data.map((order) => (
           <div
-            key={index}
+            key={order._id}
             className={`my-orders-order ${
               order.status === "Cancelled" ? "cancelled" : ""
             }`}
@@ -67,16 +73,15 @@ const MyOrders = () => {
             <p>
               {order.items.map((item, idx) =>
                 idx === order.items.length - 1
-                  ? item.name + " X " + item.quantity
-                  : item.name + " X " + item.quantity + ", "
+                  ? item.name + " x " + item.quantity
+                  : item.name + " x " + item.quantity + ", "
               )}
             </p>
 
             <p>₹{order.amount}</p>
-
             <p>Items: {order.items.length}</p>
 
-            {/* STATUS */}
+            {/* STATUS TEXT */}
             <p>
               <span
                 style={{
@@ -95,14 +100,14 @@ const MyOrders = () => {
               </b>
             </p>
 
-            {/* Cancel button */}
+            {/* Cancel Button */}
             {order.status !== "Cancelled" && (
               <button onClick={() => cancelOrder(order._id)}>
                 Cancel Order
               </button>
             )}
 
-            {/* ❌ CROSS ICON — only for cancelled */}
+            {/* Cross Delete Icon (Frontend Only) */}
             {order.status === "Cancelled" && (
               <div
                 className="delete-icon"

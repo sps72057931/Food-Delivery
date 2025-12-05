@@ -11,7 +11,7 @@
 
 .my-orders-order {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 1fr 1fr 2fr 1fr 0.3fr; /* ← X button ke liye extra column */
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 2fr 1fr 0.3fr; /* X column */
   align-items: center;
   gap: 30px;
   font-size: 14px;
@@ -42,17 +42,22 @@
   color: #454545;
 }
 
-/* DELETE (X) BUTTON */
+/* ===================================== */
+/* FIXED DELETE (X) BUTTON — NO BULGE    */
+/* ===================================== */
 .delete-icon {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 400 !important; /* no bold on hover */
   color: #cc0000;
   cursor: pointer;
+  user-select: none;
 }
 
+/* Hover should NOT change size */
 .delete-icon:hover {
   color: red;
-  transform: scale(1.2);
+  font-weight: 400 !important; /* stays same */
+  transform: none !important; /* no zoom */
 }
 
 /* RESPONSIVE */
@@ -68,7 +73,7 @@
   }
 }
 
-/* FINAL — CANCELLED ORDER STYLE */
+/* CANCELLED ORDER STYLE */
 .my-orders-order.cancelled {
   background: #ffe5e5;
   border: 1px solid #ff4d4d;

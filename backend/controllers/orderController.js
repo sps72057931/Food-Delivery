@@ -155,50 +155,37 @@ const updateStatus = async (req, res) => {
 };
 
 // ==========================
-// CANCEL ORDER
+// CANCEL ORDER (PERMANENT DELETE)
 // ==========================
 const cancelOrder = async (req, res) => {
   try {
-    const { orderId, userId } = req.body;
+    const orderId = req.params.id;
+    const userId = req.body.userId;
 
     const order = await orderModel.findById(orderId);
     if (!order) return res.json({ success: false, message: "Order not found" });
 
     // Only owner can cancel
     if (order.userId.toString() !== userId)
-      return res.json({
-        success: false,
-        message: "Unauthorized request",
-      });
+      return res.json({ success: false, message: "Unauthorized request" });
 
-    // Stripe paid orders cannot be cancelled
+    // If Stripe & paid -> cannot cancel
     if (order.paymentMethod === "Stripe" && order.payment === true)
       return res.json({
         success: false,
         message: "Paid Stripe orders cannot be cancelled",
       });
 
-    // Only allow while processing
-    if (order.status !== "Food Processing")
-      return res.json({
-        success: false,
-        message: "Order cannot be cancelled now",
-      });
-
-    await orderModel.findByIdAndUpdate(orderId, {
-      status: "Cancelled",
-    });
+    // FINAL: DELETE ORDER PERMANENTLY
+    await orderModel.findByIdAndDelete(orderId);
 
     res.json({
       success: true,
-      message: "Order Cancelled Successfully",
+      message: "Order permanently deleted",
     });
   } catch (error) {
     console.log(error);
-    res.json({
-      success: false,
-      message: "Error cancelling order",
-    });
+    res.json({ success: false, message: "Error cancelling order" });
   }
 };
 
