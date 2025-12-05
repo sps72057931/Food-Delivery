@@ -194,5 +194,5 @@ export {
   userOrders,
   listOrders,
   updateStatus,
-  cancelOrder,
+  cancelOrder
 };
