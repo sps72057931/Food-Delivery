@@ -1,46 +1,23 @@
-import "dotenv/config"; // MUST be first
+// CORS FIX FOR VERCEL -> RENDER
+const allowedOrigins = [process.env.FRONTEND_URL, process.env.ADMIN_URL];
 
-import express from "express";
-import cors from "cors";
-import { connectDB } from "./config/db.js";
-import foodRouter from "./routes/foodRoute.js";
-import userRouter from "./routes/userRoute.js";
-import cartRouter from "./routes/cartRoute.js";
-import orderRouter from "./routes/orderRoute.js";
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
 
-// app config
-const app = express();
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 
-// Render provides PORT automatically
-const port = process.env.PORT || 4000;
+  // IMPORTANT: handle preflight
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
-// Middlewares
-app.use(express.json());
-
-// IMPORTANT → allow frontend & Render to access backend
-app.use(
-  cors({
-    origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
-
-// DB connection
-connectDB();
-
-// API endpoints
-app.use("/api/food", foodRouter);
-app.use("/images", express.static("uploads"));
-app.use("/api/user", userRouter);
-app.use("/api/cart", cartRouter);
-app.use("/api/order", orderRouter);
-
-app.get("/", (req, res) => {
-  res.send("API Working");
-});
-
-// Server start
-app.listen(port, () => {
-  console.log(`Server Started on port: ${port}`);
+  next();
 });
