@@ -58,7 +58,11 @@ const PlaceOrder = () => {
       const response = await axios.post(
         `${url}/api/order/place-cod`,
         orderData,
-        { headers: { token } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ FIXED HERE
+          },
+        }
       );
 
       if (response.data.success) {
