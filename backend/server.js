@@ -1,4 +1,4 @@
-import "dotenv/config";     // MUST be first
+import "dotenv/config"; // MUST be first
 
 import express from "express";
 import cors from "cors";
@@ -20,7 +20,8 @@ app.use(express.json());
 // IMPORTANT → allow frontend & Render to access backend
 app.use(
   cors({
-    origin: "*",                 // or set specific frontend later
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
