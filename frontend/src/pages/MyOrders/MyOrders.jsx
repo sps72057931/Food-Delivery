@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { StoreContext } from '../../context/StoreContext';
 import axios from 'axios';
+import { assets } from '../../assets/frontend_assets/assets'; // ⭐ ADD THIS
 import './MyOrders.css';
 
 const MyOrders = () => {
@@ -23,24 +24,29 @@ const MyOrders = () => {
     }
   };
 
-  // Cancel order function
+  // Cancel Order Function
   const cancelOrder = async (orderId) => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirmCancel) return;
+
     try {
       const response = await axios.post(
         url + "/api/order/cancel",
         { orderId },
         { headers: { token } }
       );
-      
+
       if (response.data.success) {
         alert("Order cancelled successfully!");
-        fetchOrders(); // Refresh orders list
+        fetchOrders(); // Refresh the orders list
       } else {
-        alert("Failed to cancel order");
+        alert(response.data.message || "Failed to cancel order");
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
-      alert("Error cancelling order");
+      alert("Error cancelling order. Please try again.");
     }
   };
 
@@ -53,32 +59,47 @@ const MyOrders = () => {
   return (
     <div className="my-orders">
       <h2>My Orders</h2>
-      <div className="orders-container">
-        {orders.map((order, index) => (
-          <div key={index} className="order-item">
-            <img src="/path/to/food-icon.png" alt="" />
-            <p>{order.items.map((item, idx) => {
-              if (idx === order.items.length - 1) {
-                return item.name + " X " + item.quantity;
-              } else {
-                return item.name + " X " + item.quantity + ", ";
-              }
-            })}</p>
-            <p>₹{order.amount}</p>
-            <p>Items: {order.items.length}</p>
-            <p>
-              <span className="status-dot">●</span>
-              <b>{order.status}</b>
-            </p>
-            <button 
-              onClick={() => cancelOrder(order._id)}
-              disabled={order.status === "Cancelled" || order.status === "Delivered"}
-              className={order.status === "Cancelled" || order.status === "Delivered" ? "disabled" : ""}
-            >
-              Cancel Order
-            </button>
-          </div>
-        ))}
+      <div className="container">
+        {orders.map((order, index) => {  /* ⭐ CHANGED data to orders */
+          return (
+            <div key={index} className="my-orders-order">
+              <img src={assets.parcel_icon} alt="" />
+
+              <p>
+                {order.items.map((item, index) => {
+                  if (index === order.items.length - 1) {
+                    return item.name + " X " + item.quantity;
+                  } else {
+                    return item.name + " X " + item.quantity + ", ";
+                  }
+                })}
+              </p>
+
+              <p>₹{order.amount}</p>
+
+              <p>Items: {order.items.length}</p>
+
+              <p>
+                <span>&#x25cf;</span>
+                <b> {order.status}</b>
+              </p>
+
+              <button
+                onClick={() => cancelOrder(order._id)}
+                disabled={
+                  order.status === "Cancelled" || order.status === "Delivered"
+                }
+                className={
+                  order.status === "Cancelled" || order.status === "Delivered"
+                    ? "disabled"
+                    : ""
+                }
+              >
+                {order.status === "Cancelled" ? "Cancelled" : "Cancel Order"}
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
