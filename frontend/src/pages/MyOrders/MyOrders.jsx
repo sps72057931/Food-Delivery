@@ -1,10 +1,10 @@
 // MyOrders Component - Replace Track Order with Cancel Order
 
-import React, { useState, useEffect, useContext } from 'react';
-import { StoreContext } from '../../context/StoreContext';
-import axios from 'axios';
-import { assets } from '../../assets/frontend_assets/assets'; // ⭐ ADD THIS
-import './MyOrders.css';
+import React, { useState, useEffect, useContext } from "react";
+import { StoreContext } from "../../context/StoreContext";
+import axios from "axios";
+import { assets } from "../../assets/frontend_assets/assets"; // ⭐ ADD THIS
+import "./MyOrders.css";
 
 const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
@@ -50,32 +50,6 @@ const MyOrders = () => {
     }
   };
 
-  // Cancel Order Function
-  const cancelOrder = async (orderId) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this order?"
-    );
-    if (!confirmCancel) return;
-
-    try {
-      const response = await axios.post(
-        url + "/api/order/cancel",
-        { orderId },
-        { headers: { token } }
-      );
-
-      if (response.data.success) {
-        alert("Order cancelled successfully!");
-        fetchOrders(); // Refresh the orders list
-      } else {
-        alert(response.data.message || "Failed to cancel order");
-      }
-    } catch (error) {
-      console.error("Error cancelling order:", error);
-      alert("Error cancelling order. Please try again.");
-    }
-  };
-
   useEffect(() => {
     if (token) {
       fetchOrders();
@@ -86,7 +60,8 @@ const MyOrders = () => {
     <div className="my-orders">
       <h2>My Orders</h2>
       <div className="container">
-        {orders.map((order, index) => {  /* ⭐ CHANGED data to orders */
+        {orders.map((order, index) => {
+          /* ⭐ CHANGED data to orders */
           return (
             <div key={index} className="my-orders-order">
               <img src={assets.parcel_icon} alt="" />
