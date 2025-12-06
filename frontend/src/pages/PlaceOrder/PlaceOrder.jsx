@@ -72,14 +72,20 @@ const PlaceOrder = () => {
   };
 
   useEffect(() => {
+    // Only redirect once when component mounts
     if (!token) {
+      navigate("/cart");
       toast.error("Please login first");
-      navigate("/cart");
     } else if (getTotalCartAmount() === 0) {
-      toast.error("Please add items to cart");
       navigate("/cart");
+      toast.error("Please add items to cart");
     }
-  }, [token]);
+  }, []); // Empty dependency array - only runs once on mount
+
+  // Don't render the form if redirecting
+  if (!token || getTotalCartAmount() === 0) {
+    return null;
+  }
 
   return (
     <form className="place-order" onSubmit={placeOrder}>

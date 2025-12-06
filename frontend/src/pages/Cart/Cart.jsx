@@ -16,6 +16,15 @@ const Cart = () => {
 
   const navigate = useNavigate();
 
+  // Handle proceed to checkout
+  const handleCheckout = () => {
+    if (getTotalCartAmount() === 0) {
+      // Don't navigate if cart is empty
+      return;
+    }
+    navigate("/order");
+  };
+
   return (
     <div className="cart">
       <div className="cart-items">
@@ -79,9 +88,7 @@ const Cart = () => {
             </div>
           </div>
 
-          <button onClick={() => navigate("/order")}>
-            PROCEED TO CHECKOUT
-          </button>
+          <button onClick={handleCheckout}>PROCEED TO CHECKOUT</button>
         </div>
 
         <div className="cart-promocode">
