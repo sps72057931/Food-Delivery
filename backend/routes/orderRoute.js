@@ -5,32 +5,28 @@ import {
   placeOrder,
   updateStatus,
   userOrders,
-  verifyOrder,
-  placeOrderCOD,
   cancelOrder,
   deleteOrder,
 } from "../controllers/orderController.js";
 
 const orderRouter = express.Router();
 
-// Stripe payment
+// Place COD order
 orderRouter.post("/place", authMiddleware, placeOrder);
-
-// COD order
-orderRouter.post("/place-cod", authMiddleware, placeOrderCOD);
-
-// Stripe verification
-orderRouter.post("/verify", verifyOrder);
 
 // Cancel order
 orderRouter.post("/cancel", authMiddleware, cancelOrder);
 
-// Delete order (⭐ ADD THIS)
+// Delete order
 orderRouter.post("/delete", authMiddleware, deleteOrder);
 
-// Admin routes
-orderRouter.post("/status", authMiddleware, updateStatus);
+// User orders
 orderRouter.post("/userorders", authMiddleware, userOrders);
+
+// Admin: List all orders
 orderRouter.get("/list", authMiddleware, listOrders);
+
+// Admin: Update order status
+orderRouter.post("/status", authMiddleware, updateStatus);
 
 export default orderRouter;
