@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext } from "react"; // ⭐ Import useContext
 import Navbar from "./components/Navbar/Navbar";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
@@ -10,9 +10,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Verify from "./pages/Verify/Verify";
 import MyOrders from "./pages/MyOrders/MyOrders";
+import { StoreContext } from "./context/StoreContext"; // ⭐ Import StoreContext
 
 const App = () => {
-  const [showLogin, setShowLogin] = useState(false);
+  // ⭐ Get showLogin from context instead of local state
+  const { showLogin, setShowLogin } = useContext(StoreContext);
+
   return (
     <>
       {showLogin ? <LoginPopup setShowLogin={setShowLogin} /> : <></>}

@@ -10,40 +10,53 @@ const StoreContextProvider = (props) => {
 
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
+  const [showLogin, setShowLogin] = useState(false); // ⭐ Add this
 
   const addToCart = async (itemId) => {
+    // ⭐ Check if user is logged in first
+    if (!token) {
+      toast.error("Please login first");
+      setShowLogin(true); // Trigger login popup
+      return;
+    }
+
     if (!cartItems[itemId]) {
       setCartItems((prev) => ({ ...prev, [itemId]: 1 }));
     } else {
       setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
     }
-    if (token) {
-      const response = await axios.post(
-        url + "/api/cart/add",
-        { itemId },
-        { headers: { token } }
-      );
-      if (response.data.success) {
-        toast.success("item Added to Cart");
-      } else {
-        toast.error("Something went wrong");
-      }
+
+    const response = await axios.post(
+      url + "/api/cart/add",
+      { itemId },
+      { headers: { token } }
+    );
+    if (response.data.success) {
+      toast.success("Item added to cart");
+    } else {
+      toast.error("Something went wrong");
     }
   };
 
   const removeFromCart = async (itemId) => {
+    // ⭐ Check if user is logged in first
+    if (!token) {
+      toast.error("Please login first");
+      setShowLogin(true);
+      return;
+    }
+
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
-    if (token) {
-      const response = await axios.post(
-        url + "/api/cart/remove",
-        { itemId },
-        { headers: { token } }
-      );
-      if (response.data.success) {
-        toast.success("item Removed from Cart");
-      } else {
-        toast.error("Something went wrong");
-      }
+
+    const response = await axios.post(
+      url + "/api/cart/remove",
+      { itemId },
+      { headers: { token } }
+    );
+    if (response.data.success) {
+      toast.success("Item removed from cart");
+    } else {
+      toast.error("Something went wrong");
     }
   };
 
@@ -97,11 +110,15 @@ const StoreContextProvider = (props) => {
     url,
     token,
     setToken,
+    showLogin, // ⭐ Add this
+    setShowLogin, // ⭐ Add this
   };
+
   return (
     <StoreContext.Provider value={contextValue}>
       {props.children}
     </StoreContext.Provider>
   );
 };
+
 export default StoreContextProvider;
