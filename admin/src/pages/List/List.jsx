@@ -1,43 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./List.css";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useContext } from "react";
 import { StoreContext } from "../../context/StoreContext";
-import { useNavigate } from "react-router-dom";
 
 const List = ({ url }) => {
-  const navigate = useNavigate();
-  const { token,admin } = useContext(StoreContext);
+  const { token } = useContext(StoreContext);
   const [list, setList] = useState([]);
 
   const fetchList = async () => {
-    const response = await axios.get(`${url}/api/food/list`);
-    if (response.data.success) {
-      setList(response.data.data);
-    } else {
-      toast.error("Error");
+    try {
+      const response = await axios.get(`${url}/api/food/list`);
+      if (response.data.success) {
+        setList(response.data.data);
+      } else {
+        toast.error("Error fetching list");
+      }
+    } catch (error) {
+      toast.error("Failed to fetch food list");
     }
   };
 
   const removeFood = async (foodId) => {
-    const response = await axios.post(
-      `${url}/api/food/remove`,
-      { id: foodId },
-      { headers: { token } }
-    );
-    await fetchList();
-    if (response.data.success) {
-      toast.success(response.data.message);
-    } else {
-      toast.error("Error");
+    try {
+      const response = await axios.post(
+        `${url}/api/food/remove`,
+        { id: foodId },
+        { headers: { token } }
+      );
+      await fetchList();
+      if (response.data.success) {
+        toast.success(response.data.message);
+      } else {
+        toast.error("Error removing food");
+      }
+    } catch (error) {
+      toast.error("Failed to remove food item");
     }
   };
+
   useEffect(() => {
-    if (!admin && !token) {
-      toast.error("Please Login First");
-      navigate("/");
-    }
     fetchList();
   }, []);
 
