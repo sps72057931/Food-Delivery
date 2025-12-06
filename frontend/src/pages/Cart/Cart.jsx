@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
@@ -11,10 +11,17 @@ const Cart = () => {
     addToCart,
     removeFromCart,
     getTotalCartAmount,
-    url
+    url,
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
+
+  // Redirect to home if cart is empty
+  useEffect(() => {
+    if (getTotalCartAmount() === 0) {
+      navigate("/");
+    }
+  }, [getTotalCartAmount, navigate]);
 
   return (
     <div className="cart">
@@ -40,10 +47,7 @@ const Cart = () => {
                   <p>₹{item.price}</p>
                   <p>{cartItems[item._id]}</p>
                   <p>₹{item.price * cartItems[item._id]}</p>
-                  <p
-                    onClick={() => removeFromCart(item._id)}
-                    className="cross"
-                  >
+                  <p onClick={() => removeFromCart(item._id)} className="cross">
                     x
                   </p>
                 </div>
@@ -76,7 +80,9 @@ const Cart = () => {
 
             <div className="cart-total-details">
               <b>Total</b>
-              <b>₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}</b>
+              <b>
+                ₹{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}
+              </b>
             </div>
           </div>
 
@@ -95,7 +101,6 @@ const Cart = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
