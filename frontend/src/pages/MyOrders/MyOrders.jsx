@@ -24,13 +24,8 @@ const MyOrders = () => {
     }
   };
 
-  // Cancel order function
+  // Cancel order function - no alerts
   const cancelOrder = async (orderId) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this order?"
-    );
-    if (!confirmCancel) return;
-
     try {
       const response = await axios.post(
         url + "/api/order/cancel",
@@ -39,14 +34,10 @@ const MyOrders = () => {
       );
 
       if (response.data.success) {
-        alert("Order cancelled successfully!");
-        fetchOrders();
-      } else {
-        alert(response.data.message || "Failed to cancel order");
+        fetchOrders(); // Just refresh silently
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
-      alert("Error cancelling order. Please try again.");
     }
   };
 
