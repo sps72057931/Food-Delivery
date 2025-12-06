@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Cart = () => {
   const {
@@ -19,7 +20,8 @@ const Cart = () => {
   // Handle proceed to checkout
   const handleCheckout = () => {
     if (getTotalCartAmount() === 0) {
-      // Don't navigate if cart is empty
+      toast.error("Please add items to cart");
+      navigate("/");
       return;
     }
     navigate("/order");
