@@ -133,10 +133,11 @@ const deleteOrder = async (req, res) => {
       return res.json({ success: false, message: "Unauthorized" });
     }
 
-    if (order.status !== "Cancelled") {
+    // ✅ Allow deletion of BOTH Cancelled AND Delivered orders
+    if (order.status !== "Cancelled" && order.status !== "Delivered") {
       return res.json({
         success: false,
-        message: "Only cancelled orders can be deleted",
+        message: "Only cancelled or delivered orders can be deleted",
       });
     }
 

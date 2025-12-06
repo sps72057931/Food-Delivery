@@ -67,7 +67,6 @@ const MyOrders = () => {
       if (!response.data.success) {
         // If deletion failed, refresh to get accurate data
         fetchOrders();
-        alert(response.data.message || "Failed to delete order");
       }
     } catch (error) {
       console.error("Error deleting order:", error);
