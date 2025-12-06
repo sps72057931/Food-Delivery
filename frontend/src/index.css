@@ -205,6 +205,17 @@ body.dark-mode .place-order-left input::placeholder {
   color: #808080 !important;
 }
 
+/* Fix autofill background in dark mode */
+body.dark-mode .place-order-left input:-webkit-autofill,
+body.dark-mode .place-order-left input:-webkit-autofill:hover,
+body.dark-mode .place-order-left input:-webkit-autofill:focus,
+body.dark-mode .place-order-left input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #2a2a2a inset !important;
+  -webkit-text-fill-color: #e0e0e0 !important;
+  caret-color: #e0e0e0 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 body.dark-mode .payment-info {
   background-color: #2a2a2a !important;
   color: #e0e0e0 !important;
