@@ -50,13 +50,8 @@ const MyOrders = () => {
     }
   };
 
-  // Delete order function
+  // Delete order function - NO confirmation dialog
   const deleteOrder = async (orderId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this order from history? This action cannot be undone."
-    );
-    if (!confirmDelete) return;
-
     try {
       const response = await axios.post(
         url + "/api/order/delete",
@@ -65,8 +60,7 @@ const MyOrders = () => {
       );
 
       if (response.data.success) {
-        alert("Order deleted successfully!");
-        fetchOrders();
+        fetchOrders(); // Silently refresh the list
       } else {
         alert(response.data.message || "Failed to delete order");
       }
