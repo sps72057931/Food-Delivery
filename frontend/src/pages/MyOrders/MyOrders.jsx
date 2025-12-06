@@ -24,8 +24,15 @@ const MyOrders = () => {
     }
   };
 
-  // Cancel order function - no alerts
+  // Cancel order function - updates UI immediately
   const cancelOrder = async (orderId) => {
+    // Update UI immediately to show "Cancelled" status
+    setOrders(
+      orders.map((order) =>
+        order._id === orderId ? { ...order, status: "Cancelled" } : order
+      )
+    );
+
     try {
       const response = await axios.post(
         url + "/api/order/cancel",
@@ -33,11 +40,15 @@ const MyOrders = () => {
         { headers: { token } }
       );
 
-      if (response.data.success) {
-        fetchOrders(); // Just refresh silently
+      if (!response.data.success) {
+        // If cancellation failed, refresh to get accurate data
+        fetchOrders();
+        alert(response.data.message || "Failed to cancel order");
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
+      // Refresh on error to show accurate state
+      fetchOrders();
     }
   };
 
@@ -100,21 +111,31 @@ const MyOrders = () => {
               </p>
 
               <div className="order-actions">
-                <button
-                  onClick={() => cancelOrder(order._id)}
-                  disabled={
-                    order.status === "Cancelled" || order.status === "Delivered"
-                  }
-                  className={
-                    order.status === "Cancelled" || order.status === "Delivered"
-                      ? "disabled"
-                      : ""
-                  }
-                >
-                  {order.status === "Cancelled" ? "Cancelled" : "Cancel Order"}
-                </button>
+                {/* Show Cancel button only if order is not Cancelled or Delivered */}
+                {order.status !== "Cancelled" &&
+                  order.status !== "Delivered" && (
+                    <button onClick={() => cancelOrder(order._id)}>
+                      Cancel Order
+                    </button>
+                  )}
 
+                {/* Show "Cancelled" text for cancelled orders */}
                 {order.status === "Cancelled" && (
+                  <button className="disabled" disabled>
+                    Cancelled
+                  </button>
+                )}
+
+                {/* Show "Delivered" text for delivered orders */}
+                {order.status === "Delivered" && (
+                  <button className="disabled" disabled>
+                    Delivered
+                  </button>
+                )}
+
+                {/* Show delete button (✕) for BOTH Cancelled AND Delivered orders */}
+                {(order.status === "Cancelled" ||
+                  order.status === "Delivered") && (
                   <button
                     onClick={() => deleteOrder(order._id)}
                     className="delete-btn"
