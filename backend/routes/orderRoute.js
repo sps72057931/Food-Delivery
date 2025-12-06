@@ -1,4 +1,5 @@
 import express from "express";
+import { cancelOrder } from "../controllers/orderController.js";
 import authMiddleware from "../middleware/auth.js";
 import {
   listOrders,
@@ -28,5 +29,6 @@ orderRouter.post("/cancel", authMiddleware, cancelOrder);
 orderRouter.post("/status", authMiddleware, updateStatus);
 orderRouter.post("/userorders", authMiddleware, userOrders);
 orderRouter.get("/list", authMiddleware, listOrders);
+orderRouter.post("/cancel", authMiddleware, cancelOrder);
 
 export default orderRouter;
