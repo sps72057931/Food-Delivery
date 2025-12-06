@@ -27,6 +27,15 @@
   font-weight: 500;
   color: #454545;
 }
+
+/* Order Actions Container */
+.order-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Cancel Order Button */
 .my-orders-order button {
   border: none;
   padding: 12px 0px;
@@ -34,19 +43,43 @@
   background-color: #ffe1e1;
   cursor: pointer;
   color: #454545;
-  transition: all 0.3s ease; /* ⭐ ADD THIS */
+  transition: all 0.3s ease;
+  flex: 1;
 }
+
 .my-orders-order button:hover {
-  /* ⭐ ADD THIS */
   background-color: #ffc9c9;
 }
+
 .my-orders-order button.disabled {
-  /* ⭐ ADD THIS */
   background-color: #f0f0f0;
   cursor: not-allowed;
   opacity: 0.6;
   color: #999;
 }
+
+/* Delete Button (X) */
+.delete-btn {
+  background-color: #ff4444 !important;
+  color: white !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  font-size: 20px !important;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto !important;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #cc0000 !important;
+  transform: scale(1.1);
+}
+
 @media (max-width: 900px) {
   .my-orders-order {
     grid-template-columns: 1fr 2fr 1fr;
@@ -56,33 +89,9 @@
   .my-orders-order button {
     font-size: 10px;
   }
-}
-.cancel-btn {
-  padding: 10px 20px;
-  background-color: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.cancel-btn:hover {
-  background-color: #cc0000;
-  transform: translateY(-2px);
-}
-
-.cancel-btn.disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.cancel-btn.disabled:hover {
-  transform: none;
-}
-
-.status-dot.cancelled {
-  color: #ff4444;
+  .delete-btn {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 16px !important;
+  }
 }

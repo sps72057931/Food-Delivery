@@ -8,6 +8,7 @@ import {
   verifyOrder,
   placeOrderCOD,
   cancelOrder,
+  deleteOrder,
 } from "../controllers/orderController.js";
 
 const orderRouter = express.Router();
@@ -23,6 +24,9 @@ orderRouter.post("/verify", verifyOrder);
 
 // Cancel order
 orderRouter.post("/cancel", authMiddleware, cancelOrder);
+
+// Delete order (⭐ ADD THIS)
+orderRouter.post("/delete", authMiddleware, deleteOrder);
 
 // Admin routes
 orderRouter.post("/status", authMiddleware, updateStatus);

@@ -1,9 +1,7 @@
-// MyOrders Component - Replace Track Order with Cancel Order
-
 import React, { useState, useEffect, useContext } from "react";
 import { StoreContext } from "../../context/StoreContext";
 import axios from "axios";
-import { assets } from "../../assets/frontend_assets/assets"; // ⭐ ADD THIS
+import { assets } from "../../assets/frontend_assets/assets";
 import "./MyOrders.css";
 
 const MyOrders = () => {
@@ -18,13 +16,15 @@ const MyOrders = () => {
         {},
         { headers: { token } }
       );
-      setOrders(response.data.data);
+      if (response.data.success) {
+        setOrders(response.data.data);
+      }
     } catch (error) {
       console.error("Error fetching orders:", error);
     }
   };
 
-  // Cancel Order Function
+  // Cancel order function
   const cancelOrder = async (orderId) => {
     const confirmCancel = window.confirm(
       "Are you sure you want to cancel this order?"
@@ -40,13 +40,39 @@ const MyOrders = () => {
 
       if (response.data.success) {
         alert("Order cancelled successfully!");
-        fetchOrders(); // Refresh the orders list
+        fetchOrders();
       } else {
         alert(response.data.message || "Failed to cancel order");
       }
     } catch (error) {
       console.error("Error cancelling order:", error);
       alert("Error cancelling order. Please try again.");
+    }
+  };
+
+  // Delete order function
+  const deleteOrder = async (orderId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this order from history? This action cannot be undone."
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await axios.post(
+        url + "/api/order/delete",
+        { orderId },
+        { headers: { token } }
+      );
+
+      if (response.data.success) {
+        alert("Order deleted successfully!");
+        fetchOrders();
+      } else {
+        alert(response.data.message || "Failed to delete order");
+      }
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      alert("Error deleting order. Please try again.");
     }
   };
 
@@ -61,7 +87,6 @@ const MyOrders = () => {
       <h2>My Orders</h2>
       <div className="container">
         {orders.map((order, index) => {
-          /* ⭐ CHANGED data to orders */
           return (
             <div key={index} className="my-orders-order">
               <img src={assets.parcel_icon} alt="" />
@@ -85,19 +110,31 @@ const MyOrders = () => {
                 <b> {order.status}</b>
               </p>
 
-              <button
-                onClick={() => cancelOrder(order._id)}
-                disabled={
-                  order.status === "Cancelled" || order.status === "Delivered"
-                }
-                className={
-                  order.status === "Cancelled" || order.status === "Delivered"
-                    ? "disabled"
-                    : ""
-                }
-              >
-                {order.status === "Cancelled" ? "Cancelled" : "Cancel Order"}
-              </button>
+              <div className="order-actions">
+                <button
+                  onClick={() => cancelOrder(order._id)}
+                  disabled={
+                    order.status === "Cancelled" || order.status === "Delivered"
+                  }
+                  className={
+                    order.status === "Cancelled" || order.status === "Delivered"
+                      ? "disabled"
+                      : ""
+                  }
+                >
+                  {order.status === "Cancelled" ? "Cancelled" : "Cancel Order"}
+                </button>
+
+                {order.status === "Cancelled" && (
+                  <button
+                    onClick={() => deleteOrder(order._id)}
+                    className="delete-btn"
+                    title="Delete order from history"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
           );
         })}

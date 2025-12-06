@@ -197,13 +197,49 @@ const updateStatus = async (req, res) => {
     res.json({ success: false, message: "Error updating status" });
   }
 };
+// ==========================
+// DELETE ORDER
+// ==========================
+const deleteOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
 
+    // Find the order
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      return res.json({ success: false, message: "Order not found" });
+    }
+
+    // Check if the order belongs to the user
+    if (order.userId.toString() !== req.body.userId) {
+      return res.json({ success: false, message: "Unauthorized" });
+    }
+
+    // Only allow deletion of cancelled orders
+    if (order.status !== "Cancelled") {
+      return res.json({
+        success: false,
+        message: "Only cancelled orders can be deleted",
+      });
+    }
+
+    // Delete the order permanently
+    await orderModel.findByIdAndDelete(orderId);
+
+    res.json({ success: true, message: "Order deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error deleting order" });
+  }
+};
 export {
   placeOrder,
   placeOrderCOD,
   verifyOrder,
   userOrders,
   cancelOrder,
+  deleteOrder,
   listOrders,
   updateStatus,
 };
