@@ -2,32 +2,105 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 4%;
-  transition: background-color 0.3s;
+  padding: 20px 0px;
 }
 
 .navbar .logo {
-  width: max(10%, 80px);
+  width: 150px;
+}
+
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+  color: #49557e;
+  font-size: 18px;
+}
+
+.navbar-menu a {
+  cursor: pointer;
 }
 
 .navbar-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 40px;
 }
 
-.login-conditon {
-  font-size: 20px;
+.navbar button {
+  background: transparent;
+  font-size: 16px;
+  color: #49557e;
+  border: 1px solid tomato;
+  padding: 10px 30px;
+  border-radius: 50px;
   cursor: pointer;
-  transition: color 0.3s;
+  transition: 0.3s;
 }
 
-.login-conditon:hover {
+.navbar button:hover {
+  background-color: #fff4f2;
+}
+
+.navbar .active {
+  padding-bottom: 2px;
+  border-bottom: 2px solid #49557e;
+}
+
+.navbar li {
+  cursor: pointer;
+}
+
+.navbar-search-icon {
+  position: relative;
+}
+
+.navbar-search-icon .dot {
+  position: absolute;
+  min-width: 10px;
+  min-height: 10px;
+  background-color: tomato;
+  border-radius: 5px;
+  top: -8px;
+  right: -8px;
+}
+
+.navbar-profile {
+  position: relative;
+}
+
+.nav-profile-dropdown {
+  position: absolute;
+  display: none;
+  right: 0;
+  z-index: 1;
+}
+
+.navbar-profile:hover .nav-profile-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #fff2ef;
+  padding: 12px 25px;
+  border-radius: 4px;
+  border: 1px solid tomato;
+  outline: 2px solid white;
+  list-style: none;
+}
+
+.nav-profile-dropdown li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.nav-profile-dropdown img {
+  width: 20px;
+}
+
+.nav-profile-dropdown li:hover {
   color: tomato;
-}
-
-.navbar .profile {
-  width: 40px;
 }
 
 /* Dark Mode Toggle Button */
@@ -70,30 +143,78 @@ body.dark-mode .dark-mode-toggle:hover {
   border-color: #ffd700;
 }
 
-body.dark-mode .login-conditon {
+body.dark-mode .navbar-menu {
   color: #e0e0e0;
 }
 
-body.dark-mode .login-conditon:hover {
-  color: #ff6347;
+body.dark-mode .navbar-menu .active {
+  border-bottom-color: tomato;
 }
 
-body.dark-mode hr {
-  background-color: #333;
+body.dark-mode .navbar button {
+  color: #e0e0e0;
+  border-color: tomato;
 }
 
-@media (max-width: 600px) {
-  .navbar-right {
-    gap: 10px;
+body.dark-mode .navbar button:hover {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode .nav-profile-dropdown {
+  background-color: #2a2a2a;
+  outline-color: #1a1a1a;
+  border-color: tomato;
+}
+
+body.dark-mode .nav-profile-dropdown li {
+  color: #e0e0e0;
+}
+
+body.dark-mode .nav-profile-dropdown li:hover {
+  color: tomato;
+}
+
+@media (max-width: 1050px) {
+  .navbar .logo {
+    width: 140px;
   }
+  .navbar-menu {
+    gap: 20px;
+    font-size: 17px;
+  }
+  .navbar-right {
+    gap: 30px;
+  }
+  .navbar-right img {
+    width: 22px;
+  }
+  .navbar-right button {
+    padding: 8px 25px;
+  }
+}
 
-  .login-conditon {
+@media (max-width: 900px) {
+  .navbar .logo {
+    width: 120px;
+  }
+  .navbar-menu {
+    gap: 15px;
     font-size: 16px;
   }
+  .navbar-right {
+    gap: 20px;
+  }
+  .navbar-right img {
+    width: 20px;
+  }
+  .navbar-right button {
+    padding: 7px 20px;
+    font-size: 15px;
+  }
+}
 
-  .dark-mode-toggle {
-    width: 35px;
-    height: 35px;
-    font-size: 18px;
+@media (max-width: 750px) {
+  .navbar-menu {
+    display: none;
   }
 }
