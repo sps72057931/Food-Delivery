@@ -50,8 +50,11 @@ const MyOrders = () => {
     }
   };
 
-  // Delete order function - NO confirmation dialog
+  // Delete order function - instant UI update
   const deleteOrder = async (orderId) => {
+    // Remove from UI immediately for better UX
+    setOrders(orders.filter((order) => order._id !== orderId));
+
     try {
       const response = await axios.post(
         url + "/api/order/delete",
@@ -59,14 +62,15 @@ const MyOrders = () => {
         { headers: { token } }
       );
 
-      if (response.data.success) {
-        fetchOrders(); // Silently refresh the list
-      } else {
+      if (!response.data.success) {
+        // If deletion failed, refresh to get accurate data
+        fetchOrders();
         alert(response.data.message || "Failed to delete order");
       }
     } catch (error) {
       console.error("Error deleting order:", error);
-      alert("Error deleting order. Please try again.");
+      // Refresh on error to show accurate state
+      fetchOrders();
     }
   };
 
