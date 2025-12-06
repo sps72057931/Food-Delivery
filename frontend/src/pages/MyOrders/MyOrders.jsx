@@ -19,6 +19,32 @@ const MyOrders = () => {
     }
   };
 
+  // Cancel Order Function
+  const cancelOrder = async (orderId) => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this order?"
+    );
+    if (!confirmCancel) return;
+
+    try {
+      const response = await axios.post(
+        url + "/api/order/cancel",
+        { orderId },
+        { headers: { token } }
+      );
+
+      if (response.data.success) {
+        alert("Order cancelled successfully!");
+        fetchOrders(); // Refresh the orders list
+      } else {
+        alert(response.data.message || "Failed to cancel order");
+      }
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert("Error cancelling order. Please try again.");
+    }
+  };
+
   useEffect(() => {
     if (token) {
       fetchOrders();
@@ -44,7 +70,6 @@ const MyOrders = () => {
                 })}
               </p>
 
-              {/* ⭐ CHANGED: USD → Rupees */}
               <p>₹{order.amount}</p>
 
               <p>Items: {order.items.length}</p>
@@ -54,7 +79,19 @@ const MyOrders = () => {
                 <b> {order.status}</b>
               </p>
 
-              <button onClick={fetchOrders}>Track Order</button>
+              <button
+                onClick={() => cancelOrder(order._id)}
+                disabled={
+                  order.status === "Cancelled" || order.status === "Delivered"
+                }
+                className={
+                  order.status === "Cancelled" || order.status === "Delivered"
+                    ? "disabled"
+                    : ""
+                }
+              >
+                {order.status === "Cancelled" ? "Cancelled" : "Cancel Order"}
+              </button>
             </div>
           );
         })}

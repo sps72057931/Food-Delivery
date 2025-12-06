@@ -7,6 +7,7 @@ import {
   userOrders,
   verifyOrder,
   placeOrderCOD,
+  cancelOrder, // ⭐ Added import
 } from "../controllers/orderController.js";
 
 const orderRouter = express.Router();
@@ -19,6 +20,9 @@ orderRouter.post("/place-cod", authMiddleware, placeOrderCOD);
 
 // Stripe verification
 orderRouter.post("/verify", verifyOrder);
+
+// Cancel order (⭐ NEW)
+orderRouter.post("/cancel", authMiddleware, cancelOrder);
 
 // Admin routes
 orderRouter.post("/status", authMiddleware, updateStatus);

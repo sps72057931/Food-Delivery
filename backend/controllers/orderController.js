@@ -118,6 +118,47 @@ const userOrders = async (req, res) => {
 };
 
 // ==========================
+// CANCEL ORDER (NEW)
+// ==========================
+const cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    // Find the order
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      return res.json({ success: false, message: "Order not found" });
+    }
+
+    // Check if the order belongs to the user
+    if (order.userId.toString() !== req.body.userId) {
+      return res.json({ success: false, message: "Unauthorized" });
+    }
+
+    // Check if order can be cancelled
+    if (order.status === "Delivered") {
+      return res.json({
+        success: false,
+        message: "Cannot cancel delivered orders",
+      });
+    }
+
+    if (order.status === "Cancelled") {
+      return res.json({ success: false, message: "Order already cancelled" });
+    }
+
+    // Update order status to Cancelled
+    await orderModel.findByIdAndUpdate(orderId, { status: "Cancelled" });
+
+    res.json({ success: true, message: "Order cancelled successfully" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error cancelling order" });
+  }
+};
+
+// ==========================
 // ADMIN: LIST ALL ORDERS
 // ==========================
 const listOrders = async (req, res) => {
@@ -162,6 +203,7 @@ export {
   placeOrderCOD,
   verifyOrder,
   userOrders,
+  cancelOrder, // ⭐ Added to exports
   listOrders,
   updateStatus,
 };
