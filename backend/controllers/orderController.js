@@ -118,7 +118,7 @@ const userOrders = async (req, res) => {
 };
 
 // ==========================
-// CANCEL ORDER (NEW)
+// CANCEL ORDER
 // ==========================
 const cancelOrder = async (req, res) => {
   try {
@@ -197,44 +197,13 @@ const updateStatus = async (req, res) => {
     res.json({ success: false, message: "Error updating status" });
   }
 };
-// Cancel Order
-const cancelOrder = async (req, res) => {
-  try {
-    const { orderId } = req.body;
-    
-    // Find the order
-    const order = await orderModel.findById(orderId);
-    
-    if (!order) {
-      return res.json({ success: false, message: "Order not found" });
-    }
-    
-    // Check if order can be cancelled
-    if (order.status === "Delivered") {
-      return res.json({ success: false, message: "Cannot cancel delivered orders" });
-    }
-    
-    if (order.status === "Cancelled") {
-      return res.json({ success: false, message: "Order already cancelled" });
-    }
-    
-    // Update order status to Cancelled
-    await orderModel.findByIdAndUpdate(orderId, { status: "Cancelled" });
-    
-    res.json({ success: true, message: "Order cancelled successfully" });
-    
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: "Error cancelling order" });
-  }
-};
+
 export {
   placeOrder,
   placeOrderCOD,
   verifyOrder,
   userOrders,
-  cancelOrder, // ⭐ Added to exports
+  cancelOrder,
   listOrders,
   updateStatus,
-  cancelOrder
 };
