@@ -1,42 +1,92 @@
-.order-item{
-    display: grid;
-    grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr;
-    align-items: start;
-    gap: 30px;
-    border: 1px solid tomato;
-    padding: 20px;
-    margin: 30px 0px;
-    font-size: 14px;
-    color: #505050;
+.order-item {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr;
+  align-items: start;
+  gap: 30px;
+  border: 1px solid tomato;
+  padding: 20px;
+  margin: 30px 0px;
+  font-size: 14px;
+  color: #505050;
+  border-radius: 8px;
+  transition: all 0.3s;
+  background-color: white;
 }
-.order-item-food, .order-item-name{
-    font-weight: 600;
+
+.order-item:hover {
+  box-shadow: 0 4px 8px rgba(255, 99, 71, 0.2);
 }
-.order-item-name{
-    margin-top: 30px;
-    margin-bottom: 5px;
+
+body.dark-mode .order-item {
+  background-color: #1a1a1a;
+  border-color: #ff6347;
+  color: #b0b0b0;
 }
-.order-item-address{
-    margin-bottom: 10px;
+
+body.dark-mode .order-item:hover {
+  box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
 }
-.order-item select{
-    background-color: #ffe8e4;
-    border: 1px solid tomato;
-    width: max(11vw,120px);
-    padding: 10px;
-    outline: none;
+
+.order-item-food,
+.order-item-name {
+  font-weight: 600;
+  color: #333;
 }
-@media (max-width:1000px) {
-    .order-item{
-        font-size: 12px;
-        grid-template-columns: 0.5fr 2fr 1fr;
-        padding: 15px 8px;
-    }
-    .order-item select{
-        padding: 5px;
-        font-size: 12px;
-    }
-    .order-item img{
-        width: 40px;
-    }
+
+body.dark-mode .order-item-food,
+body.dark-mode .order-item-name {
+  color: #e0e0e0;
+}
+
+.order-item-name {
+  margin-top: 30px;
+  margin-bottom: 5px;
+}
+
+.order-item-address {
+  margin-bottom: 10px;
+}
+
+.order-item select {
+  background-color: #ffe8e4;
+  border: 1px solid tomato;
+  width: max(11vw, 120px);
+  padding: 10px;
+  outline: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.order-item select:hover {
+  background-color: #ffd4cc;
+}
+
+body.dark-mode .order-item select {
+  background-color: #2d1f1f;
+  color: #e0e0e0;
+  border-color: #ff6347;
+}
+
+body.dark-mode .order-item select:hover {
+  background-color: #3d2424;
+}
+
+body.dark-mode .order-item select option {
+  background-color: #2d2d2d;
+}
+
+@media (max-width: 1000px) {
+  .order-item {
+    font-size: 12px;
+    grid-template-columns: 0.5fr 2fr 1fr;
+    padding: 15px 8px;
+  }
+  .order-item select {
+    padding: 5px;
+    font-size: 12px;
+  }
+  .order-item img {
+    width: 40px;
+  }
 }

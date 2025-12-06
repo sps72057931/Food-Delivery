@@ -1,32 +1,89 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: Outfit;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Outfit;
 }
-body{
-    min-height: 100vh;
-    background-color: #fcfcfc;
+
+body {
+  min-height: 100vh;
+  background-color: #fcfcfc;
+  transition: background-color 0.3s, color 0.3s;
 }
-a{
-    text-decoration: none;
-    color: inherit;
+
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
 }
-hr{
-    border: none;
-    height: 1px;
-    background-color: #a9a9a9;
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
-.app-content{
-    display: flex;
+
+hr {
+  border: none;
+  height: 1px;
+  background-color: #a9a9a9;
+  transition: background-color 0.3s;
 }
-.flex-col{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+
+body.dark-mode hr {
+  background-color: #333;
 }
-.cursor{
-    cursor: pointer;
+
+.app-content {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+/* Scrollbar styling for dark mode */
+body.dark-mode::-webkit-scrollbar {
+  width: 10px;
+}
+
+body.dark-mode::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+body.dark-mode::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 5px;
+}
+
+body.dark-mode::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Toast styling for dark mode */
+body.dark-mode .Toastify__toast {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+body.dark-mode .Toastify__toast--success {
+  background-color: #1a4d2e;
+}
+
+body.dark-mode .Toastify__toast--error {
+  background-color: #4d1a1a;
+}
+
+body.dark-mode .Toastify__toast--info {
+  background-color: #1a3a4d;
+}
+
+body.dark-mode .Toastify__toast--warning {
+  background-color: #4d3a1a;
 }
