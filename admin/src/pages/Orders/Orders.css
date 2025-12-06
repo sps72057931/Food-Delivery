@@ -1,6 +1,6 @@
 .order-item {
   display: grid;
-  grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1fr 0.3fr;
   align-items: start;
   gap: 30px;
   border: 1px solid tomato;
@@ -11,6 +11,7 @@
   border-radius: 8px;
   transition: all 0.3s;
   background-color: white;
+  position: relative;
 }
 
 .order-item:hover {
@@ -76,11 +77,48 @@ body.dark-mode .order-item select option {
   background-color: #2d2d2d;
 }
 
+/* Remove Button Styles */
+.order-remove-btn {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.order-remove-btn:hover {
+  background-color: #cc0000;
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.order-remove-btn:active {
+  transform: scale(0.95);
+}
+
+body.dark-mode .order-remove-btn {
+  background-color: #cc0000;
+}
+
+body.dark-mode .order-remove-btn:hover {
+  background-color: #ff0000;
+}
+
 @media (max-width: 1000px) {
   .order-item {
     font-size: 12px;
-    grid-template-columns: 0.5fr 2fr 1fr;
+    grid-template-columns: 0.5fr 2fr 1fr 0.3fr;
     padding: 15px 8px;
+    gap: 15px;
   }
   .order-item select {
     padding: 5px;
@@ -88,5 +126,10 @@ body.dark-mode .order-item select option {
   }
   .order-item img {
     width: 40px;
+  }
+  .order-remove-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
   }
 }

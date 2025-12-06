@@ -149,7 +149,28 @@ const deleteOrder = async (req, res) => {
     res.json({ success: false, message: "Error deleting order" });
   }
 };
+// Remove order
+const removeOrder = async (req, res) => {
+  try {
+    const { orderId } = req.body;
 
+    if (!orderId) {
+      return res.json({ success: false, message: "Order ID is required" });
+    }
+
+    // Find and delete the order
+    const order = await orderModel.findByIdAndDelete(orderId);
+
+    if (!order) {
+      return res.json({ success: false, message: "Order not found" });
+    }
+
+    res.json({ success: true, message: "Order removed successfully" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: "Error removing order" });
+  }
+};
 export {
   placeOrder,
   userOrders,
@@ -157,4 +178,5 @@ export {
   deleteOrder,
   listOrders,
   updateStatus,
+  removeOrder,
 };

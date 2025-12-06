@@ -45,6 +45,29 @@ const Orders = ({ url }) => {
     }
   };
 
+  const removeOrder = async (orderId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to remove this order?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await axios.post(
+        url + "/api/order/remove",
+        { orderId },
+        { headers: { token } }
+      );
+      if (response.data.success) {
+        toast.success("Order removed successfully");
+        await fetchAllOrder();
+      } else {
+        toast.error(response.data.message || "Failed to remove order");
+      }
+    } catch (error) {
+      toast.error("Error removing order");
+    }
+  };
+
   useEffect(() => {
     fetchAllOrder();
   }, []);
@@ -93,6 +116,13 @@ const Orders = ({ url }) => {
               <option value="Out for delivery">Out for delivery</option>
               <option value="Delivered">Delivered</option>
             </select>
+            <button
+              className="order-remove-btn"
+              onClick={() => removeOrder(order._id)}
+              title="Remove Order"
+            >
+              ✕
+            </button>
           </div>
         ))}
       </div>
