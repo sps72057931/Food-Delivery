@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
@@ -15,13 +15,6 @@ const Cart = () => {
   } = useContext(StoreContext);
 
   const navigate = useNavigate();
-
-  // Redirect to home if cart is empty
-  useEffect(() => {
-    if (getTotalCartAmount() === 0) {
-      navigate("/");
-    }
-  }, [getTotalCartAmount, navigate]);
 
   return (
     <div className="cart">
